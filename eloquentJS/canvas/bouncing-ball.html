@@ -29,6 +29,7 @@
   };
 
   function updateAnimation(step) {
+    // step is a time passed from the last call of this function in animationFrame
     let context = document.querySelector("canvas").getContext("2d");
     context.save();
     context.translate(10, 10);
@@ -36,12 +37,12 @@
 
     drawBox(context);
     centerY += ySpeed * step;
-    let lowerBoundary = boxSize - boxLineWidth / 2, upperBoundary = boxLineWidth / 2;
-    if ((centerY + ballRadius) >= lowerBoundary) {
-      centerY = lowerBoundary - ballRadius;
+    let lowerBoxBoundary = boxSize - boxLineWidth / 2, upperBoxBoundary = boxLineWidth / 2;
+    if ((centerY + ballRadius) >= lowerBoxBoundary) {
+      centerY = lowerBoxBoundary - ballRadius;
       ySpeed = -ySpeed;
-    } else if ((centerY - ballRadius) <= upperBoundary) {
-      centerY = upperBoundary + ballRadius;
+    } else if ((centerY - ballRadius) <= upperBoxBoundary) {
+      centerY = upperBoxBoundary + ballRadius;
       ySpeed = -ySpeed;
     }
     drawBall(context, centerX, centerY, ballRadius);
