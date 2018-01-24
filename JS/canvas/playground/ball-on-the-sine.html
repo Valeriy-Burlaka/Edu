@@ -1,10 +1,11 @@
 <canvas width="1080" height="600" style="border: 2px solid lightgrey;"></canvas>
 <script>
-
+  "use strict";
+  const canvasWidth = 1080;
   const ctx = document.querySelector("canvas").getContext("2d");
 
   function round(value, places) {
-    let decimals = [1, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 10000000];
+    let decimals = [1, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 10000000, 100000000];
     if (places === undefined) {
       places = 0;
     }
@@ -80,7 +81,7 @@
 
   function* sineTrajectoryGen(start, length, amplitude) {
     let x0 = start
-    let x1, y0, y1 = 0;
+    let x1 = 0, y0 = 0, y1 = 0;
     for (let angle=start; angle<length; angle++) {
       x1 = angle;
       y1 = round(Math.sin(Math.PI*angle/180), 4) * amplitude;
@@ -130,6 +131,8 @@
     ctx.arc(circleX, circleY, circleRadius, 0, Math.PI*2);
     ctx.fill();
     ctx.restore();
+
+    // return {x: circleX, y: circleY};
   };
 
 function drawStatic() {
@@ -154,9 +157,9 @@ function updateAnimation(timeStep) {
 
   let distanceToPass = timeStep * circleSpeed, distPassed = 0;
   // console.log(distanceToPass, sine);
-  let remainingTraj = trajectory.slice(lastTrajIndex, trajectory.length);
-  for (let i=lastTrajIndex; i<remainingTraj.length; i++) {
-    let coords = remainingTraj[i];
+  // let remainingTraj = trajectory.slice(lastTrajIndex, trajectory.length);
+  for (let i=lastTrajIndex; i<trajectory.length; i++) {
+    let coords = trajectory[i];
     let segment = distaneBetweenPoints(coords.x0, coords.y0, coords.x1, coords.y1);
     if (isNaN(segment)) {
       console.log("resulting line segment is NaN, convert to 0");
@@ -166,10 +169,16 @@ function updateAnimation(timeStep) {
     // console.log(`distance passed: ${distPassed}, distance yet to pass: ${distanceToPass - distPassed}`);
     if (distPassed >= distanceToPass) {
       drawCircleAdjacentToLine(ctx, coords.x0, coords.y0, coords.x1, coords.y1, circleRadius);
-      lastTrajIndex = i;
-      ctx.restore();
-      return;
+      break;
     }
+    lastTrajIndex++;
+  }
+  if (lastTrajIndex + 1 >= trajectory.length) {
+    console.log("Circle is out!");
+    trajectory.reverse();
+    lastTrajIndex = 0;
+    // switch circle color
+
   }
   ctx.restore();
 }
@@ -192,5 +201,6 @@ requestAnimationFrame(frame);
 // };
 //
 // let interval = setInterval(frame, 100);
+
 
 </script>
