@@ -1,23 +1,20 @@
-<canvas width="1080" height="600" style="border: 2px solid lightgrey;"></canvas>
+<canvas style="border: 2px solid lightgrey;"></canvas>
 <script>
   "use strict";
   const canvasWidth = 1080;
-  const ctx = document.querySelector("canvas").getContext("2d");
+  const canvasHeight = 350;
+  const canvas = document.querySelector("canvas");
+  canvas.setAttribute("width", canvasWidth);
+  canvas.setAttribute("height", canvasHeight);
+  const ctx = canvas.getContext("2d");
+
 
   function round(value, places) {
-    let decimals = [1, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 10000000, 100000000];
-    if (places === undefined) {
-      places = 0;
-    }
-    if (places > decimals.length) {
-      throw new Error(`Unsupported number of decimal places.
-        Can round up to ${decimals.length} places`);
-    }
-    value = Math.round(value * decimals[places]) / decimals[places];
-    return value;
+    let result = parseFloat(value.toFixed(places.toString()));
+    return result;
   };
 
-  function distaneBetweenPoints(x0, y0, x1, y1) {
+  function distanceBetweenPoints(x0, y0, x1, y1) {
     let a = Math.pow(x1-x0, 2), b = Math.pow(y1-y0, 2);
     let dist = Math.sqrt(a + b);
     return round(dist, 2);
@@ -97,62 +94,78 @@
     for (let coords of sine) {
       ctx.moveTo(coords.x1, coords.y1);
       ctx.lineTo(coords.x0, coords.y0);
-      // if (coords.x0 % 300 === 0) {
-      //   drawLongLineThroughTwoPoints(ctx, coords.x0, coords.y0, coords.x1, coords.y1);
-      //   drawPerpendicular(ctx, coords.x0, coords.y0, coords.x1, coords.y1, 50);
-      // }
     }
     ctx.stroke();
     ctx.closePath();
   };
 
-  function drawCircleAdjacentToLine(ctx, x0, y0, x1, y1, circleRadius, onTop=true) {
+  function* circleColorsGen() {
+    let colors = ["green", "red", "blue"];
+    let i = 0;
+    while (true) {
+      let c = colors[i%colors.length];
+      i++;
+      yield c;
+    }
+  };
+
+  function drawCircleAdjacentToLine(ctx, x0, y0, x1, y1, circleRadius, circleColor, onTop=true) {
     // console.log(`drawCircleAdjacentToLine::I'm called with x0->${x0}, y0->${y0}, x1->${x1}, y1->${y1}`);
     let slope = lineSlope(x0, y0, x1, y1);
-    // drawLongLineThroughTwoPoints(ctx, x0, y0, x1, y1);
-    // drawPerpendicular(ctx, x0, y0, x1, y1, 20);
     let perpPoints = endPointsOfPerpendicular(x0, y0, x1, y1, circleRadius);
     let middleX = perpPoints.x0, middleY = perpPoints.y0;
     let circleX = perpPoints.x1, circleY = perpPoints.y1;
-    // [0,0] is left top corner; positive Y is at bottom;
-    // negative slope looks like positive in this coordinate system
     // if (slope < 0) {
-    //   drawLongLineThroughTwoPoints(ctx, x0, y0, x1, y1);
     //   console.log(`line slope: ${slope}; middle point: [${middleX}, ${middleY}]; circle center: [${circleX}, ${circleY}]`);
     // }
-    if (slope < 0) {
+
+    // When slope is negative (positive in traditional coordinate system),
+    // it's perpendicular happens to have downward direction, so the
+    // circle center will be on the bottom side of the curve.
+    // When slope is positive (traditional negative), the circle center
+    // will end up at the top of the curve.
+    if (slope < 0 && onTop) {
       circleX = middleX - Math.abs(circleX - middleX);
       circleY = middleY - Math.abs(circleY - middleY);
+    } else if (slope >= 0 && !onTop) {
+      circleX = middleX - Math.abs(circleX - middleX);
+      circleY = middleY + Math.abs(circleY - middleY);
     }
     ctx.save();
     ctx.beginPath();
-    ctx.fillStyle = "green";
+    ctx.fillStyle = circleColor;
     ctx.moveTo(circleX, circleY);
     ctx.arc(circleX, circleY, circleRadius, 0, Math.PI*2);
     ctx.fill();
     ctx.restore();
-
-    // return {x: circleX, y: circleY};
   };
 
 function drawStatic() {
-  // console.log("I'm drawStatic!;");
   let sineLength = parseInt(document.querySelector("canvas").getAttribute("width"));
   drawStrokeLine(0, 0, sineLength, "green");
   drawSine(0, sineLength, 50);
 }
 
-const circleSpeed = 150;  // px/s
+
+const circleSpeed = 250;  // px/s
 const circleRadius = 20;
-let sineLength = parseInt(document.querySelector("canvas").getAttribute("width"));
+const circleColors = circleColorsGen();
+let circleColor = circleColors.next().value;
+// whether the circle should continue its movement on the opposite side of the 
+// sine when it reached the end of trajectory 
+const reverseSides = true;
+// whether the circle should be on the top side of the sine now.
+let onTopSide = true;
+const changeColor = true;
+let sineLength = canvasWidth;
 let trajectory = [...sineTrajectoryGen(0, sineLength, 50)];
 let lastTrajIndex = 0;
 
 
-function updateAnimation(timeStep) {
+function updateAnimationFrame(timeStep) {
   ctx.save();
   ctx.clearRect(0, 0, sineLength, sineLength);
-  ctx.translate(0, 250);
+  ctx.translate(0, canvasHeight/2);
   drawStatic();
 
   let distanceToPass = timeStep * circleSpeed, distPassed = 0;
@@ -160,7 +173,7 @@ function updateAnimation(timeStep) {
   // let remainingTraj = trajectory.slice(lastTrajIndex, trajectory.length);
   for (let i=lastTrajIndex; i<trajectory.length; i++) {
     let coords = trajectory[i];
-    let segment = distaneBetweenPoints(coords.x0, coords.y0, coords.x1, coords.y1);
+    let segment = distanceBetweenPoints(coords.x0, coords.y0, coords.x1, coords.y1);
     if (isNaN(segment)) {
       console.log("resulting line segment is NaN, convert to 0");
       segment = 0;
@@ -168,16 +181,22 @@ function updateAnimation(timeStep) {
     distPassed += segment;
     // console.log(`distance passed: ${distPassed}, distance yet to pass: ${distanceToPass - distPassed}`);
     if (distPassed >= distanceToPass) {
-      drawCircleAdjacentToLine(ctx, coords.x0, coords.y0, coords.x1, coords.y1, circleRadius);
+      drawCircleAdjacentToLine(ctx, coords.x0, coords.y0, coords.x1, coords.y1, 
+                               circleRadius, circleColor, onTopSide);
       break;
     }
     lastTrajIndex++;
   }
   if (lastTrajIndex + 1 >= trajectory.length) {
-    console.log("Circle is out!");
+    // console.log("Circle is out!");
     trajectory.reverse();
     lastTrajIndex = 0;
-    // switch circle color
+    if (reverseSides) {
+      onTopSide = !onTopSide;
+    }
+    if (changeColor) {
+      circleColor = circleColors.next().value;
+    }
 
   }
   ctx.restore();
@@ -188,7 +207,7 @@ let lastTime = null;
 function frame(time) {
   if (lastTime != null) {
     // console.log(Math.min(100, time - lastTime) / 1000);
-    updateAnimation(Math.min(100, time - lastTime) / 1000);
+    updateAnimationFrame(Math.min(100, time - lastTime) / 1000);
   }
   lastTime = time;
   requestAnimationFrame(frame);
@@ -197,7 +216,7 @@ function frame(time) {
 requestAnimationFrame(frame);
 
 // function frame() {
-//   updateAnimation(100 / 1000);
+//   updateAnimationFrame(100 / 1000);
 // };
 //
 // let interval = setInterval(frame, 100);
