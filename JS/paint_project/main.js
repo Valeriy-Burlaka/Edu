@@ -219,7 +219,12 @@ function rectangularBorder() {
     border.style.position = "absolute";
     border.style.border = "1px solid black";
     return border;
-}
+};
+
+
+function findRect() {
+
+};
 
 
 tools.Rectangle = function(event, cx) {
@@ -231,16 +236,16 @@ tools.Rectangle = function(event, cx) {
     trackDrag(function(event) {
         currentRelPos = relativePos(event, cx.canvas);
         currentAbsPos = absolutePos(event);
-        border.style.left = currentAbsPos.x > initialAbsPos.x ? initialAbsPos.x : currentAbsPos.x;
-        border.style.top = currentAbsPos.y > initialAbsPos.y ? initialAbsPos.y : currentAbsPos.y;
+        border.style.left = Math.min(currentAbsPos.x, initialAbsPos.x);
+        border.style.top = Math.min(currentAbsPos.y, initialAbsPos.y);
         border.style.width = Math.abs(currentAbsPos.x - initialAbsPos.x) + "px";
         border.style.height = Math.abs(currentAbsPos.y - initialAbsPos.y) + "px";
         
     }, function() {
         let width = Math.abs(currentRelPos.x - initialRelPos.x);
         let height = Math.abs(currentRelPos.y - initialRelPos.y);
-        let x = currentRelPos.x > initialRelPos.x ? initialRelPos.x : currentRelPos.x;
-        let y = currentRelPos.y > initialRelPos.y ? initialRelPos.y : currentRelPos.y;
+        let x = Math.min(currentRelPos.x, initialRelPos.x);
+        let y = Math.min(currentRelPos.y, initialRelPos.y);
         document.body.removeChild(border);
         cx.fillRect(x, y, width, height);
     });
