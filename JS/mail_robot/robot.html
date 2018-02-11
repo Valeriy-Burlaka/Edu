@@ -5,17 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Mail Robot</title>
-    <style>
-        /* #display {
-            border: 2px solid lightgray;
-        } */
-
-        /* #display {
-            position: absolute;
-            top: 100px;
-            left: 100px;
-        } */
-    </style>
 </head>
 <body>
 <div id="main">
@@ -25,6 +14,15 @@
     <div id="toolbar">
         <span>Select Robot:
             <select name="robots" id="robots"></select>
+        </span><br>
+        <span>Robot Speed:
+            <select name="robot-speed" id="robot-speed">
+                <option>1</option>
+                <option>2</option>
+                <option>3</option>
+                <option>4</option>
+                <option>5</option>
+            </select>
         </span><br>
         <button id="start">Start Robot</button>
     </div>
@@ -258,17 +256,6 @@
         }
     };
 
-    function runRobot(state, robot, memory) {
-        for (let turn = 0;; turn++) {
-            if (state.parcels.length == 0) {
-                return turn;
-            }
-            let action = robot(state, memory);
-            state = state.move(action.direction);
-            memory = action.memory;
-        }
-    };
-
     function randomRobot(state) {
         return {direction: randomPick(roadGraph[state.place].neighbors)};
     };
@@ -347,9 +334,20 @@
         document.getElementById("place").innerHTML = state.place;
     };
 
+    function disableControls() {
+        for (let id of ["robots", "start", "robot-speed"]) {
+            document.getElementById(id).disabled = true;
+        }
+    };
+
+    function enableControls() {
+        for (let id of ["robots", "start", "robot-speed"]) {
+            document.getElementById(id).disabled = false;
+        }
+    };
+
     function runRobotAnimation(state, robot, memory) {
-        let start = document.getElementById("start");
-        start.disabled = true;
+        disableControls();
         let turn = 0;
         let ctx = getContext();
         drawAll(ctx, state, turn);
@@ -357,19 +355,17 @@
         function run() {
             turn++;
             let action = robot(state, memory);
-            // console.log(`Robot decided to take action ${action.direction}`);
             state = state.move(action.direction);
-
             drawAll(ctx, state, turn);
             if (state.parcels.length == 0) {
-                // console.log(`Robot has finished to deliver parcels on turn ${turn}!`);
                 clearInterval(interval);
-                start.disabled = false;
+                enableControls();
                 return turn;
             }
             memory = action.memory;
         };
-        let interval = setInterval(run, 300);
+        let speed = parseInt(document.getElementById("robot-speed").value);
+        let interval = setInterval(run, 500/speed);
     };
 
     document.addEventListener("DOMContentLoaded", () => {
