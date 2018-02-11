@@ -256,6 +256,15 @@
         }
     };
 
+    function drawAll(ctx, state, turn) {
+        clearDisplay(ctx);
+        drawVillageMap();
+        drawRobot(state);
+        drawParcels(state);
+        document.getElementById("turn").innerHTML = turn;
+        document.getElementById("place").innerHTML = state.place;
+    };
+
     function randomRobot(state) {
         return {direction: randomPick(roadGraph[state.place].neighbors)};
     };
@@ -303,17 +312,28 @@
         let shortestRouteLength = findRoute(graph, place, nearestParcel.place).length;
         parcels.slice(1).map(p => {
             let routeLength = findRoute(graph, place, p.place).length;
-            //   console.log(`Place ${p.place} is ${routeLength} moves away from ${place}`);
             if (routeLength < shortestRouteLength) {
                 shortestRouteLength = routeLength
                 nearestParcel = p;
             }
         });
-        // console.log(`${nearestParcel.place} is a nearest parcel`);
         return nearestParcel;
     };
 
-    function nearestGoalOrientedRobot({place, parcels}, route) {
+    function parcelsByDistance(graph, place, parcels, action="pickup") {
+        let attr = action == "pickup" ? "place" : "address"
+        let byDistance = parcels.map(p => {
+            let distance = findRoute(graph, place, p[attr]).length;
+            return {place: p.place, address: p.address, distance: distance};
+        });
+        function compare(a, b) {
+            return a.distance - b.distance;
+        };
+        byDistance.sort(compare);
+        return byDistance;
+    };
+
+    function nearestPickupThenDeliveryRobot({place, parcels}, route) {
         if (route.length == 0) {
             let parcel = findNearestParcel(roadGraph, place, parcels);
             if (parcel.place != place) {
@@ -325,13 +345,36 @@
         return {direction: route[0], memory: route.slice(1)};
     };
 
-    function drawAll(ctx, state, turn) {
-        clearDisplay(ctx);
-        drawVillageMap();
-        drawRobot(state);
-        drawParcels(state);
-        document.getElementById("turn").innerHTML = turn;
-        document.getElementById("place").innerHTML = state.place;
+    function nearestGoalRobot({place, parcels}, route) {
+        if (route.length == 0) {
+            let pByPickupDistance = parcelsByDistance(roadGraph, place, parcels);
+            let nearestParcel = pByPickupDistance[0];
+            if (nearestParcel.place != place) {
+                route = findRoute(roadGraph, place, nearestParcel.place);
+            } else {
+                let pickedParcels = pByPickupDistance.filter(p => {
+                    return p.place == place;
+                });
+                let unpickedParcels = pByPickupDistance.filter(p => {
+                    return p.place != place;
+                });
+                if (unpickedParcels.length == 0) {
+                    let pByDeliveryDistance = parcelsByDistance(roadGraph, place, pickedParcels, "delivery");
+                    route = findRoute(roadGraph, place, pByDeliveryDistance[0].address);
+                } else {
+                    let pByDeliveryDistance = parcelsByDistance(roadGraph, place, pickedParcels, "delivery");
+                    let goal;
+                    if (pByDeliveryDistance[0].distance <= unpickedParcels[0].distance) {
+                        goal = pByDeliveryDistance[0].address;
+                    } else {
+                        goal = unpickedParcels[0].place;
+                    }
+                    route = findRoute(roadGraph, place, goal);
+                }
+            }
+        }
+        let action = {direction: route[0], memory: route.slice(1)};
+        return action;
     };
 
     function disableControls() {
@@ -365,7 +408,7 @@
             memory = action.memory;
         };
         let speed = parseInt(document.getElementById("robot-speed").value);
-        let interval = setInterval(run, 500/speed);
+        let interval = setInterval(run, 1000/speed);
     };
 
     document.addEventListener("DOMContentLoaded", () => {
@@ -380,7 +423,8 @@
             "Route Robot": routeRobot,
             "Random Robot": randomRobot,
             "Goal-Oriented Robot": goalOrientedRobot,
-            "Nearest Goal-Oriented Robot": nearestGoalOrientedRobot
+            "Nearest-Pickup-Then-Delivery Robot": nearestPickupThenDeliveryRobot,
+            "Always-Nearest-Goal Robot": nearestGoalRobot
         }
         let select = document.getElementById("robots");
         for (let robot in robots) {
