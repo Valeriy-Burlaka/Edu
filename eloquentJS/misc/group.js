@@ -1,22 +1,21 @@
+"use strict";
 
 
 class Group {
     constructor(iter=[]) {
         this.content = [];
         for (let elem of iter) {this.add(elem)};
-        // return this;
     }
 
     add(value) {
         if (this.content.indexOf(value) < 0) {
             this.content.push(value);
         }
-        // "in" is about Array keys (indexes)
+        // "in" is about Array keys, not values;
         // if (!(value in this.content)) {this.content.push(value)};
     }
 
     has(value) {
-        // return value in this.content;
         return this.content.indexOf(value) > -1;
     }
 
@@ -26,10 +25,33 @@ class Group {
         }
     }
 
-    static fromIterable(iter) {
+    static from(iter) {
         return new Group(iter);
     }
 }
+
+
+class GroupIterator {
+    constructor(group) {
+        this.group = group;
+        this.index = 0;
+    }
+
+    next() {
+        if (this.index == this.group.content.length) {
+            return {done: true};
+        }
+        let value = this.group.content[this.index];
+        this.index++;
+        return {value, done: false};
+    }
+}
+
+Group.prototype[Symbol.iterator] = function() {
+    return new GroupIterator(this);
+};
+
+
 
 function log(v) {console.log(v)};
 
@@ -52,4 +74,8 @@ g.delete("a");
 log(g);
 g.delete("2");
 log(g);
-log(Group.fromIterable([1,2,2,3,3,3,4,"a"]))
+log(Group.from([1,2,2,3,3,3,4,"a"]))
+
+for (let member of new Group(["a", "b", "c"])) {
+    log(member);
+}
