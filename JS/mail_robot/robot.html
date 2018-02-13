@@ -5,21 +5,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Mail Robot</title>
-    <style>
-        /* #display {
-            border: 2px solid lightgray;
-        } */
-
-        /* #display {
-            position: absolute;
-            top: 100px;
-            left: 100px;
-        } */
-    </style>
 </head>
 <body>
 <div id="main">
-    <!-- <canvas id="display" width="500" height="300"></canvas> -->
+    <div>
+        <canvas id="display"></canvas>
+    </div>
+    <div id="toolbar">
+        <span>Select Robot:
+            <select name="robots" id="robots"></select>
+        </span><br>
+        <span>Robot Speed:
+            <select name="robot-speed" id="robot-speed">
+                <option>1</option>
+                <option>2</option>
+                <option>3</option>
+                <option>4</option>
+                <option>5</option>
+            </select>
+        </span><br>
+        <button id="start">Start Robot</button>
+    </div>
+    <div id="monitor">
+        <span>Current Turn: <span id="turn">0</span></span><br>
+        <span>Current Place: <span id="place">--</span></span><br>
+    </div>
 </div>
 
 </body>
@@ -28,7 +38,7 @@
     const mapScale = 5;
     const displayWidth = 100;  // units
     const displayHeight = 60;
-    const placeSize = 6;
+    const placeSize = 7;
     const robotSize = placeSize * 2 / 3;
     const parcelSize = placeSize / 3;
 
@@ -75,7 +85,8 @@
         }
 
         move(destination) {
-            if (!roadGraph[this.place.neighbors].includes(destination)) {
+            // console.dir(roadGraph[this.place]);
+            if (!roadGraph[this.place].neighbors.includes(destination)) {
                 return this;
             } else {
                 let parcels = this.parcels.map(p => {
@@ -92,6 +103,7 @@
         let choice = Math.floor(Math.random() * array.length);
         return array[choice];
     };
+
     VillageState.random = function(parcelCount = 5) {
         let parcels = [];
         for (let i = 0; i < parcelCount; i++) {
@@ -105,15 +117,30 @@
         return new VillageState("Post Office", parcels);
     };
 
-    document.addEventListener("DOMContentLoaded", () => {
-        let display = document.createElement("canvas");
-        display.setAttribute("width", displayWidth * mapScale);
-        display.setAttribute("height", displayHeight * mapScale);
-        display.setAttribute("id", "display");
-        display.style.border = "2px solid lightgray";
-        document.getElementById("main").appendChild(display);
-    });
+    function elt(name, attributes) {
+        let node = document.createElement(name);
+        if (attributes) {
+        for (let attr in attributes)
+            if (attributes.hasOwnProperty(attr))
+            node.setAttribute(attr, attributes[attr]);
+        }
+        for (let i = 2; i < arguments.length; i++) {
+        let child = arguments[i];
+        if (typeof child == "string")
+            child = document.createTextNode(child);
+        node.appendChild(child);
+        }
+        return node;
+    };
     
+    function getContext() {
+        return document.getElementById("display").getContext("2d");
+    };
+
+    function clearDisplay(ctx) {
+        ctx.clearRect(0, 0, scaled(displayWidth), scaled(displayHeight));
+    };
+
     function scaled(value) {
         return value * mapScale;
     };
@@ -130,6 +157,10 @@
         let textX = x + squareSide/4, textY = y + squareSide*3/4;
         return {x: textX, y: textY};
     };
+
+    function textSettings(size, family="Arial") {
+        return `${size/2}pt ${family}`;
+    }
 
     function placeBottomLeft(name) {
         let topLeft = realCoords(roadGraph[name]);
@@ -149,22 +180,25 @@
     };
 
     function drawVillageMap() {
-        let ctx = document.getElementById("display").getContext("2d");
+        let ctx = getContext();
         for (let name of Object.keys(roadGraph)) {
             let place = roadGraph[name];
             let {x, y} = realCoords(place);
+            let pSize = scaled(placeSize);
+
             ctx.beginPath();
             ctx.moveTo(x, y);
-            ctx.strokeRect(x, y, scaled(placeSize), scaled(placeSize));
+            ctx.strokeRect(x, y, pSize, pSize);
             ctx.closePath();
             
-            ctx.font = `${scaled(placeSize/2)}pt Arial`;
-            let textStart = textStartInSquare(x, y, scaled(placeSize));
+            ctx.font = textSettings(pSize);
+            let textStart = textStartInSquare(x, y, pSize);
             ctx.fillText(name[0], textStart.x, textStart.y);
-            let placeCenter = squareCenter(x, y, scaled(placeSize));
+
+            let placeCenter = squareCenter(x, y, pSize);
             place.neighbors.forEach(n => {
                 let nCoords = realCoords(roadGraph[n])
-                let nCenter = squareCenter(nCoords.x, nCoords.y, scaled(placeSize));
+                let nCenter = squareCenter(nCoords.x, nCoords.y, pSize);
                 ctx.beginPath();                
                 ctx.moveTo(placeCenter.x, placeCenter.y);
                 ctx.lineTo(nCenter.x, nCenter.y);
@@ -181,7 +215,7 @@
         let ctx = document.getElementById("display").getContext("2d");
         ctx.beginPath();
         ctx.strokeRect(x, y, scaled(robotSize), scaled(robotSize));
-        ctx.font = `${scaled(robotSize/2)}pt Arial`;
+        ctx.font = textSettings(scaled(robotSize));
         ctx.fillText("R", textStart.x, textStart.y);
         ctx.closePath();
     };
@@ -196,7 +230,7 @@
                 byPlace[place].push(p.address[0]);
             }
         });
-        let ctx = document.getElementById("display").getContext("2d");
+        let ctx = getContext();
         let pSize = scaled(parcelSize);
         for (let parcelPlace of Object.keys(byPlace)) {
             let parcelsPileStart, x, y;
@@ -214,26 +248,198 @@
                 ctx.beginPath();
                 ctx.strokeRect(x, y, pSize, pSize);
                 let textStart = textStartInSquare(x, y, pSize);
-                ctx.font = `${pSize/2}pt Arial`;
+                ctx.font = textSettings(pSize);
                 ctx.fillText(item, textStart.x, textStart.y);
                 y -= pSize;
                 ctx.closePath();
             });
         }
+    };
 
-        // console.log(byPlace);
+    function drawAll(ctx, state, turn) {
+        clearDisplay(ctx);
+        drawVillageMap();
+        drawRobot(state);
+        drawParcels(state);
+        document.getElementById("turn").innerHTML = turn;
+        document.getElementById("place").innerHTML = state.place;
+    };
 
-    }
+    function randomRobot(state) {
+        return {direction: randomPick(roadGraph[state.place].neighbors)};
+    };
+
+    function routeRobot(state, memory) {
+        const mailRoute = [
+            "Alice's House", "Cabin", "Alice's House", "Bob's House",
+            "Town Hall", "Daria's House", "Ernie's House",
+            "Grete's House", "Shop", "Grete's House", "Farm",
+            "Marketplace", "Post Office"
+        ];
+        if (memory.length == 0) {
+        memory = mailRoute;
+        }
+        return {direction: memory[0], memory: memory.slice(1)};
+    };
+
+    function findRoute(graph, from, to) {
+        let work = [{at: from, route: []}];
+        for (let i = 0; i < work.length; i++) {
+            let {at, route} = work[i];
+            for (let place of graph[at].neighbors) {
+                if (place == to) return route.concat(place);
+                if (!work.some(w => w.at == place)) {
+                    work.push({at: place, route: route.concat(place)});
+                }
+            }
+        }
+    };
+
+    function goalOrientedRobot({place, parcels}, route) {
+        if (route.length == 0) {
+            let parcel = parcels[0];
+            if (parcel.place != place) {
+                route = findRoute(roadGraph, place, parcel.place);
+            } else {
+                route = findRoute(roadGraph, place, parcel.address);
+            }
+        }
+        return {direction: route[0], memory: route.slice(1)};
+    };
+
+    function findNearestParcel(graph, place, parcels) {
+        let nearestParcel = parcels[0];
+        let shortestRouteLength = findRoute(graph, place, nearestParcel.place).length;
+        parcels.slice(1).map(p => {
+            let routeLength = findRoute(graph, place, p.place).length;
+            if (routeLength < shortestRouteLength) {
+                shortestRouteLength = routeLength
+                nearestParcel = p;
+            }
+        });
+        return nearestParcel;
+    };
+
+    function parcelsByDistance(graph, place, parcels, action="pickup") {
+        let attr = action == "pickup" ? "place" : "address"
+        let byDistance = parcels.map(p => {
+            let distance = findRoute(graph, place, p[attr]).length;
+            return {place: p.place, address: p.address, distance: distance};
+        });
+        function compare(a, b) {
+            return a.distance - b.distance;
+        };
+        byDistance.sort(compare);
+        return byDistance;
+    };
+
+    function nearestPickupThenDeliveryRobot({place, parcels}, route) {
+        if (route.length == 0) {
+            let parcel = findNearestParcel(roadGraph, place, parcels);
+            if (parcel.place != place) {
+                route = findRoute(roadGraph, place, parcel.place);
+            } else {
+                route = findRoute(roadGraph, place, parcel.address);
+            }
+        }
+        return {direction: route[0], memory: route.slice(1)};
+    };
+
+    function nearestGoalRobot({place, parcels}, route) {
+        if (route.length == 0) {
+            let pByPickupDistance = parcelsByDistance(roadGraph, place, parcels);
+            let nearestParcel = pByPickupDistance[0];
+            if (nearestParcel.place != place) {
+                route = findRoute(roadGraph, place, nearestParcel.place);
+            } else {
+                let pickedParcels = pByPickupDistance.filter(p => {
+                    return p.place == place;
+                });
+                let unpickedParcels = pByPickupDistance.filter(p => {
+                    return p.place != place;
+                });
+                if (unpickedParcels.length == 0) {
+                    let pByDeliveryDistance = parcelsByDistance(roadGraph, place, pickedParcels, "delivery");
+                    route = findRoute(roadGraph, place, pByDeliveryDistance[0].address);
+                } else {
+                    let pByDeliveryDistance = parcelsByDistance(roadGraph, place, pickedParcels, "delivery");
+                    let goal;
+                    if (pByDeliveryDistance[0].distance <= unpickedParcels[0].distance) {
+                        goal = pByDeliveryDistance[0].address;
+                    } else {
+                        goal = unpickedParcels[0].place;
+                    }
+                    route = findRoute(roadGraph, place, goal);
+                }
+            }
+        }
+        let action = {direction: route[0], memory: route.slice(1)};
+        return action;
+    };
+
+    function disableControls() {
+        for (let id of ["robots", "start", "robot-speed"]) {
+            document.getElementById(id).disabled = true;
+        }
+    };
+
+    function enableControls() {
+        for (let id of ["robots", "start", "robot-speed"]) {
+            document.getElementById(id).disabled = false;
+        }
+    };
+
+    function runRobotAnimation(state, robot, memory) {
+        disableControls();
+        let turn = 0;
+        let ctx = getContext();
+        drawAll(ctx, state, turn);
+
+        function run() {
+            turn++;
+            let action = robot(state, memory);
+            state = state.move(action.direction);
+            drawAll(ctx, state, turn);
+            if (state.parcels.length == 0) {
+                clearInterval(interval);
+                enableControls();
+                return turn;
+            }
+            memory = action.memory;
+        };
+        let speed = parseInt(document.getElementById("robot-speed").value);
+        let interval = setInterval(run, 1000/speed);
+    };
+
+    document.addEventListener("DOMContentLoaded", () => {
+        let main = document.getElementById("main");
+
+        let display = document.getElementById("display");
+        display.setAttribute("width", displayWidth * mapScale);
+        display.setAttribute("height", displayHeight * mapScale);
+        display.style.border = "2px solid lightgray";
+
+        let robots = {
+            "Route Robot": routeRobot,
+            "Random Robot": randomRobot,
+            "Goal-Oriented Robot": goalOrientedRobot,
+            "Nearest-Pickup-Then-Delivery Robot": nearestPickupThenDeliveryRobot,
+            "Always-Nearest-Goal Robot": nearestGoalRobot
+        }
+        let select = document.getElementById("robots");
+        for (let robot in robots) {
+            select.appendChild(elt("option", null, robot));
+        }
+
+        document.getElementById("start").addEventListener("click", () => {
+            runRobotAnimation(VillageState.random(), robots[select.value], []);
+        });
+                        
+    });
 
     document.addEventListener("DOMContentLoaded", () => {
         drawVillageMap();
-        let state = VillageState.random();
-        drawRobot(state);
-        // console.log(state);
-        drawParcels(state);
     });
-
-
 
 </script>
 
