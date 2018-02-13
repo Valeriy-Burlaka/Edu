@@ -52,30 +52,68 @@ Group.prototype[Symbol.iterator] = function() {
 };
 
 
+class PGroup {
+    constructor(iter=[]) {
+        this.content = iter;
+    }
+
+    static empty() {
+        return new PGroup([]);
+    }
+    static from(iter) {
+        return new PGroup(iter);
+    }
+
+    add(value) {
+        if (this.content.indexOf(value) < 0) {
+            return new PGroup(this.content.concat([value])); 
+        } else {
+            return this;
+        }
+    }
+
+    has(value) {
+        return this.content.indexOf(value) > -1;
+    }
+
+    delete(value) {
+        return new PGroup(this.content.filter(v => {
+            return v !== value;
+        }));
+    }
+}
+
 
 function log(v) {console.log(v)};
 
-let g = new Group([1,2]);
-log(g);
-g.add(1);
-log(g);
-log(g.has(1));
-log(g.has("1"));
-log(g.has(3));
-g.add("1");
-log(g);
-g.add("a");
-log(g);
-log(g.has("a"));
-g.add("b");
-log(g);
-log(g.has(3));
-g.delete("a");
-log(g);
-g.delete("2");
-log(g);
-log(Group.from([1,2,2,3,3,3,4,"a"]))
+// let g = new Group([1,2]);
+// log(g);
+// g.add(1);
+// log(g);
+// log(g.has(1));
+// log(g.has("1"));
+// log(g.has(3));
+// g.add("1");
+// log(g);
+// g.add("a");
+// log(g);
+// log(g.has("a"));
+// g.add("b");
+// log(g);
+// log(g.has(3));
+// g.delete("a");
+// log(g);
+// g.delete("2");
+// log(g);
+// log(Group.from([1,2,2,3,3,3,4,"a"]))
 
-for (let member of new Group(["a", "b", "c"])) {
-    log(member);
-}
+// for (let member of new Group(["a", "b", "c"])) {
+//     log(member);
+// }
+
+let pg1 = PGroup.empty().add(1).add(2).add(2).add("2");
+let pg2 = pg1.delete(2).delete("2");
+console.assert(pg1.has(2));
+console.assert(pg1.has("2"));
+console.assert(pg2.has(1));
+console.assert(!(pg2.has(2)))
