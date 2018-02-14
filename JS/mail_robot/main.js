@@ -7,7 +7,7 @@ const {randomRobot,
        nearestPickupThenDeliveryRobot,
        nearestGoalRobot} = require("./js/robots");
 
-const mapScale = 5;
+const mapScale = 6;
 const displayWidth = 100;  // units
 const displayHeight = 60;
 const placeSize = 7;
@@ -32,7 +32,7 @@ function elt(name, attributes) {
 };
 
 function getContext() {
-    return document.getElementById("display").getContext("2d");
+    return document.querySelector("canvas").getContext("2d");
 };
 
 function clearDisplay(ctx) {
@@ -110,7 +110,7 @@ function drawRobot(state) {
     let {x, y} = robotTopLeft(state);
     let textStart = textStartInSquare(x, y, scaled(robotSize));
 
-    let ctx = document.getElementById("display").getContext("2d");
+    let ctx = getContext();
     ctx.beginPath();
     ctx.strokeRect(x, y, scaled(robotSize), scaled(robotSize));
     ctx.font = textSettings(scaled(robotSize));
@@ -164,13 +164,13 @@ function drawAll(ctx, state, turn) {
 };
 
 function disableControls() {
-    for (let id of ["robots", "start", "robot-speed"]) {
+    for (let id of ["robots", "start", "input-robot-speed"]) {
         document.getElementById(id).disabled = true;
     }
 };
 
 function enableControls() {
-    for (let id of ["robots", "start", "robot-speed"]) {
+    for (let id of ["robots", "start", "input-robot-speed"]) {
         document.getElementById(id).disabled = false;
     }
 };
@@ -193,17 +193,14 @@ function runRobotAnimation(state, robot, memory) {
         }
         memory = action.memory;
     };
-    let speed = parseInt(document.getElementById("robot-speed").value);
+    let speed = parseInt(document.getElementById("input-robot-speed").value);
     let interval = setInterval(run, 1000/speed);
 };
 
 document.addEventListener("DOMContentLoaded", () => {
-    let main = document.getElementById("main");
-
-    let display = document.getElementById("display");
-    display.setAttribute("width", displayWidth * mapScale);
-    display.setAttribute("height", displayHeight * mapScale);
-    display.style.border = "2px solid lightgray";
+    let display = document.querySelector("canvas");
+    display.setAttribute("width", scaled(displayWidth));
+    display.setAttribute("height", scaled(displayHeight));
 
     let state = VillageState.random(visualRoadGraph);
     drawVillageMap(state.graph);
@@ -224,4 +221,10 @@ document.addEventListener("DOMContentLoaded", () => {
         runRobotAnimation(state, robots[select.value], []);
     });
                     
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+    document.querySelector("#input-robot-speed").addEventListener("input", (e) => {
+        document.querySelector("#robot-speed-value").innerHTML = e.target.value;
+    });
 });
