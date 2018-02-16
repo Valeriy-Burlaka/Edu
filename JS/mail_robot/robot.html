@@ -3,119 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Mail Robot</title>
-    <style>
-        
-        #main {
-            display: flex;
-        }
-
-        #toolbar {
-            margin-left: 20px;
-        }
-
-        .labels {
-            margin-right: 1em;
-            font: bold 15px sans-serif;
-        }
-
-        .values {
-            margin-left: 1em;
-            font: bold 13px arial;
-        }
-
-        #start {
-            margin-top: 20px;
-            margin-bottom: 20px; 
-            background-color: #57a957;
-            border-color: #57a957;
-            cursor: pointer;
-
-            padding: 12px 30px;
-            
-            font: bold 13px arial;
-            text-transform: uppercase;
-            color: #fff;
-            transition-duration: 0.5s;
-        }
-
-        #start:hover {
-            background-color: #62c462;
-        }
-
-        #start:disabled {
-            border-color: #57A957;
-            background: #57A957;
-            color: #D2FFD2;
-        }
-
-        input[type=range] {
-            -webkit-appearance: none; 
-            height: 20px;
-            margin: 15px 0px 0px 5px;
-            width: 150px;     
-        }
-
-        input[type=range] {
-            outline: none;
-        }
-
-        input[type=range]::-webkit-slider-runnable-track {
-            width: 100%;
-            height: 8px;
-            cursor: pointer;
-            box-shadow: 0px 0px 0px #000000;
-            background: #AC51B5;
-            border-radius: 5px;
-            /* border: 0px solid #000101; */
-            /* animation: 0.2s; */
-        }
-
-        input[type=range]::-webkit-slider-thumb {
-            box-shadow: 0px 0px 0px #000000;
-            border: 0px solid #000000;
-            height: 14px;
-            width: 32px;
-            border-radius: 7px;
-            background: #65001C;
-            cursor: pointer;
-            -webkit-appearance: none;
-            margin-top: -3px;
-        }
-
-        input[type=range]:focus::-webkit-slider-runnable-track {
-            background: #AC51B5;
-        }
-
-        input[type=range]:disabled::-webkit-slider-runnable-track {
-            background: lightgrey;
-        }
-
-        input[type=range]:disabled::-webkit-slider-thumb {
-            background: darkgrey;
-        }
     
-    </style>
+    <link rel="stylesheet" href="./css/main.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 </head>
 <body>
-<div id="main">
-    <div id="display">
-        <canvas style="border:2px solid lightgray;";></canvas>
-    </div>
-    <div id="toolbar">
-        <span class="labels">Robot:
-            <select name="robots" id="robots"></select>
-        </span><br>
-        <div>
-            <span class="labels">Robot Speed: </span>
-            <input type="range" id="input-robot-speed" value="3" min="1" max="5" step="1">
-            <span class="values" id="robot-speed-value">3</span>
+<div id="main" class="container-fluid">
+    <div class="row">
+        <div class="col">
+            <canvas style="border:2px solid lightgray;";></canvas>
         </div>
-        <button type="button" id="start">Start Robot</button>
-        <div>
-            <span class="labels">Current Turn: <span class="values" id="turn">0</span></span><br>
-            <span class="labels">Current Place: <span class="values" id="place">--</span></span><br>
+        <div class="col">
+            <!-- <div class="row"> -->
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <label class="input-group-text" for="robots">Robots: </label>
+                    </div>
+                    <select class="custom-select" name="robot options" id="robots"></select>
+                </div>
+            <!-- </div> -->
+            <!-- <div class="row"> -->
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">Speed: </span>
+                </div>
+                <div class="col">
+                    <input type="range" id="input-robot-speed" value="3" min="1" max="5" step="1">
+                    <output id="robot-speed-value" class="values">3</output>
+                </div>
+            </div>
+            <!-- <div class="row"> -->
+                <div>
+                    <span class="labels">Turn: <output class="values" id="turn">0</output></span><br>
+                    <span class="labels">Place: <output class="values" id="place">--</output></span><br>
+                </div>
+            <!-- </div> -->
+            <!-- <div class="row"> -->
+                <div>
+                    <button type="button" id="start">Start Robot</button>
+                </div>
+            <!-- </div> -->
         </div>
     </div>
 </div>

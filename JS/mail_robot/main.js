@@ -206,11 +206,12 @@ document.addEventListener("DOMContentLoaded", () => {
     drawVillageMap(state.graph);
 
     let robots = {
-        "Route Robot": routeRobot,
-        "Random Robot": randomRobot,
-        "Goal-Oriented Robot": goalOrientedRobot,
-        "Nearest-Pickup-Then-Delivery Robot": nearestPickupThenDeliveryRobot,
-        "Always-Nearest-Goal Robot": nearestGoalRobot
+        "Choose...": null,
+        "Route": routeRobot,
+        "Random": randomRobot,
+        "Goal-Oriented": goalOrientedRobot,
+        "Nearest-Pickup-Then-Delivery": nearestPickupThenDeliveryRobot,
+        "Always-Nearest-Goal": nearestGoalRobot
     }
     let select = document.getElementById("robots");
     for (let robot in robots) {
@@ -218,9 +219,10 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     document.getElementById("start").addEventListener("click", () => {
-        runRobotAnimation(state, robots[select.value], []);
-    });
-                    
+        if (robots[select.value] !== null) {
+            runRobotAnimation(state, robots[select.value], []);
+        }
+    });                   
 });
 
 document.addEventListener("DOMContentLoaded", () => {
