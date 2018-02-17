@@ -1,0 +1,209 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"get",
+				"getUTCMilliseconds"
+			]
+		]
+	},
+	"buffers":
+	[
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 167.0,
+		"last_filter": "insta",
+		"selected_items":
+		[
+			[
+				"insta",
+				"Package Control: Install Package"
+			]
+		],
+		"width": 467.0
+	},
+	"console":
+	{
+		"height": 0.0,
+		"history":
+		[
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/Users/valeriy/Edu/vagrant/workspace/edu/tutorials/web/facebook-react/main.js",
+		"/Users/valeriy/Work/traffic_analysys/part-00000",
+		"/Users/valeriy/Work/traffic_analysys/test_athena_json-00004",
+		"/Users/valeriy/Work/workspace/check_ver.sh",
+		"/Users/valeriy/Dropbox/Docs/finance/poland/flora_fauna",
+		"/Users/valeriy/Work/Docs/reporting/Spikelet request JSON & query:",
+		"/Users/valeriy/Dropbox/Docs/rent/2016_rent_notes",
+		"/Users/valeriy/Work/planning/grooming_Elbrus-1",
+		"/Users/valeriy/Dropbox/Work/1-1_2016_11",
+		"/Users/valeriy/Documents/1/scripts/script.js",
+		"/Users/valeriy/Work/workspace/spikelet/examples/curl",
+		"/Users/valeriy/Work/workspace/spikelet/examples/peer_39_daily_for_me-2.json",
+		"/Users/valeriy/Work/workspace/spikelet/examples/peer_39_daily_for_me-1.json",
+		"/Users/valeriy/Work/workspace/spikelet/examples/peer_39_daily.json",
+		"/Users/valeriy/Work/workspace/spikelet/examples/peer_39_monthly.json",
+		"/Users/valeriy/Work/workspace/spikelet/examples/peer_39.json",
+		"/Users/valeriy/Work/workspace/spikelet/examples/peer_39_daily_with_aliases.json",
+		"/Users/valeriy/Work/workspace/spikelet/examples/peer_39_web-generated_and_aliases.json",
+		"/Users/valeriy/Work/workspace/spikelet/examples/peer_39_web-generated.json",
+		"/Users/valeriy/Work/workspace/spikelet/examples/peer_39_monthly_with_bad_filter.json",
+		"/Users/valeriy/Documents/sample_list.txt",
+		"/Users/valeriy/Work/workspace/void_testing/void-worker-creadentials.csv",
+		"/Users/valeriy/Work/workspace/void_testing/Lotame_monthly_report/query_dmp_matches",
+		"/Users/valeriy/Work/workspace/spikelet/examples/test_factual_combo_report.json",
+		"/Users/valeriy/Work/workspace/spikelet/examples/test_factual_combo_report_csv_schedule.json",
+		"/Users/valeriy/Projects/allegro/data/user_positive_feedbacks",
+		"/Users/valeriy/Projects/allegro/data/bid_in_progress",
+		"/Users/valeriy/Work/workspace/spikelet/examples/test_factual_proximity_report.json",
+		"/Users/valeriy/Work/workspace/spikelet/examples/bluekai_daily_with_aliases.json"
+	],
+	"find":
+	{
+		"height": 23.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"\",\n",
+			"'",
+			"u'",
+			"google",
+			"milliseconds",
+			"intervar"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+			"\"",
+			"'"
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"sheets":
+			[
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 23.0
+	},
+	"input":
+	{
+		"height": 0.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"pinned_build_system": "",
+	"project": "facebook-react.sublime-project",
+	"replace":
+	{
+		"height": 42.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": true,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 121.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}

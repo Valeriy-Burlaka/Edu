@@ -1,0 +1,3 @@
+http://stackoverflow.com/questions/28918968/how-to-get-historical-data-for-currency-exchange-rates-via-yahoo-finance
+http://stackoverflow.com/questions/3139879/how-do-i-get-currency-exchange-rates-via-an-api-such-as-google-finance
+curl "http://api.fixer.io/latest?base=USD&symbols=EUR,PLN" (European Central Bank rates: http://fixer.io/)

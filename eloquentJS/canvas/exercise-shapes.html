@@ -1,0 +1,97 @@
+<div style="display: inline;">
+  <canvas width="200" height="200" id="trapezoid"></canvas>
+  <canvas width="250" height="200" id="diamond"></canvas>
+  <canvas width="400" height="200" id="zigzagg"></canvas>
+  <canvas width="200" height="200" id="spiral"></canvas>
+  <canvas width="200" height="200" id="star"></canvas>
+</div>
+<script>
+  function trapezoid(cx, top, bottom, leg) {
+    cx.save();
+    cx.translate(20, 20);
+    cx.beginPath();
+
+    cx.moveTo(0, leg);
+    cx.lineTo(bottom, leg);
+    cx.lineTo(top + (bottom - top) / 2, 0);
+    cx.lineTo((bottom - top) / 2, 0);
+
+    cx.closePath();
+    cx.stroke();
+    cx.restore();
+  };
+
+  function redDiamond(cx, size) {
+    cx.save();
+    cx.translate(size, 0);
+    cx.rotate(Math.PI / 4);
+    cx.fillStyle = "red";
+    cx.fillRect(0, 0, size, size);
+
+    cx.restore();
+  };
+
+  function zigzaggingLine(cx, length, amount) {
+    let yStep = 7;
+    cx.save();
+    cx.translate(20, 20);
+    cx.beginPath();
+    for (let i = 0; i <= amount; i++) {
+      let x = i % 2 * length;
+      let y = yStep * i;
+      cx.lineTo(x, y);
+    };
+    cx.stroke();
+    cx.restore();
+  };
+
+  function spiral(cx) {
+    let numLines = 100;
+    let radius = 1.0;
+    let angle = 0.2;
+    cx.save();
+    cx.translate(100, 100);
+    cx.beginPath();
+    for (let i = 0; i <= numLines; i++) {
+      let x = Math.cos(angle * i) * radius * i;
+      let y = Math.sin(angle * i) * radius * i;
+      cx.lineTo(x, y);
+    };
+    cx.stroke();
+    cx.restore();
+  };
+
+  function star(cx, points, radius) {
+    cx.save();
+    cx.translate(100, 100);
+
+    cx.fillStyle = "orange";
+    cx.beginPath();
+    // cx.moveTo(radius, 0);
+    for (let i = 0; i <= points; i++) {
+      let angle = (Math.PI * 2) / points * i;
+      let x = Math.cos(angle) * radius;
+      let y = Math.sin(angle) * radius;
+      cx.quadraticCurveTo(0, 0, x, y);
+    };
+
+    cx.fill();
+    cx.restore();
+  };
+</script>
+<script>
+  let context = document.querySelector("#trapezoid").getContext("2d");
+  trapezoid(context, 100, 150, 75);
+
+  context = document.querySelector("#diamond").getContext("2d");
+  redDiamond(context, 100);
+
+  context = document.querySelector("#zigzagg").getContext("2d");
+  zigzaggingLine(context, 100, 15);
+
+  context = document.querySelector("#spiral").getContext("2d");
+  spiral(context);
+
+  context = document.querySelector("#star").getContext("2d");
+  star(context, 8, 75);
+</script>

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>Dynamic Clock</title>
+    <!-- <link rel="stylesheet" type="text/css" href="style.css"> -->
+    <script src="https://unpkg.com/react@latest/dist/react.js"></script>
+    <script src="https://unpkg.com/react-dom@latest/dist/react-dom.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+
+    class Welcome extends React.Component {
+      render() {
+        return <h1>Hello, {this.props.name}</h1>;
+      }
+    }
+
+    class Clock extends React.Component {
+      constructor(props) {
+        super(props);
+        this.state = {date: new Date()};
+      }
+
+      componentDidMount() {
+        this.timerID = setInterval(
+          () => this.tick(),
+          1000
+        );
+      }
+
+      componentWillUnmount() {
+        clearInterval(this.timerID);
+      }
+
+      tick() {
+        this.setState({
+          date: new Date()
+        });
+      }
+
+      render() {
+        return (
+          <div>
+            <h2>It is {this.state.date.toLocaleTimeString()}.</h2>
+          </div>
+        );
+      }
+    }
+
+   function ActionLink(props) {
+     function handleClick(e) {
+       e.preventDefault();
+       console.log("Click-click!");
+     }
+
+     return (
+       <a href="#" onClick={handleClick}>
+        {props.text}
+       </a>
+     )
+   }
+
+   class Toggle extends React.Component {
+     // https://facebook.github.io/react/docs/handling-events.html
+     constructor(props) {
+       super(props);
+       this.state = {isToggleOn: true};
+       this.handleClick = this.handleClick.bind(this);
+     }
+
+     handleClick() {
+       // https://facebook.github.io/react/docs/state-and-lifecycle.html#state-updates-may-be-asynchronous
+       this.setState(prevState => ({
+         isToggleOn: !prevState.isToggleOn
+       }));
+     }
+
+     render() {
+       return (
+         <div>
+           <button onClick={this.handleClick}>
+             {this.state.isToggleOn ? 'ON' : 'OFF'}
+           </button>
+         </div>
+       );
+     }
+
+   }
+
+   function App() {
+     return (
+       <div>
+         <Welcome name="World!?" />
+         <Clock />
+         <ActionLink text="Clicky-clock, isn't it?!" />
+         <Toggle />
+       </div>
+     );
+   }
+
+   ReactDOM.render(
+      <App />,
+      document.getElementById('root')
+    );
+
+  </script>
+</body>
+</html>

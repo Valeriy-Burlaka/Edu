@@ -1,0 +1,16 @@
+<canvas id="myCanvas"></canvas>
+
+<script>
+  var c=document.getElementById("myCanvas");
+  var ctx=c.getContext("2d");
+
+  var gradient=ctx.createLinearGradient(0,0,170,0);
+  gradient.addColorStop("0","magenta");
+  gradient.addColorStop("0.5","blue");
+  gradient.addColorStop("1.0","red");
+
+  // Fill with gradient
+  ctx.strokeStyle=gradient;
+  ctx.lineWidth=5;
+  ctx.strokeRect(20,20,150,100);
+</script>
