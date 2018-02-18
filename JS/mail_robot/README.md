@@ -2,5 +2,5 @@
 npm install -g browserify
 ```
 ```
-$ browserify main.js > bundle.js
+$ npm run build
 ```

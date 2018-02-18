@@ -176,23 +176,28 @@ function enableControls() {
 };
 
 function runRobotAnimation(state, robot, memory) {
-    disableControls();
-    let turn = 0;
-    let ctx = getContext();
-    drawAll(ctx, state, turn);
-
     function run() {
         turn++;
         let action = robot(state, memory);
         state = state.move(action.direction);
         drawAll(ctx, state, turn);
         if (state.parcels.length == 0) {
-            clearInterval(interval);
-            enableControls();
+            stop();
             return turn;
         }
         memory = action.memory;
     };
+    function stop() {
+        clearInterval(interval);
+        enableControls();
+        document.getElementById("stop").removeEventListener("click", stop);
+    };
+
+    document.getElementById("stop").addEventListener("click", stop);
+    disableControls();
+    let turn = 0;
+    let ctx = getContext();
+    drawAll(ctx, state, turn);
     let speed = parseInt(document.getElementById("input-robot-speed").value);
     let interval = setInterval(run, 1000/speed);
 };

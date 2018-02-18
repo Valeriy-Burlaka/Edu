@@ -15,35 +15,62 @@
             <canvas style="border:2px solid lightgray;";></canvas>
         </div>
         <div class="col">
-            <!-- <div class="row"> -->
-                <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                        <label class="input-group-text" for="robots">Robots: </label>
+            <div class="row">
+                <div class="col-7">
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <label class="input-group-text" for="robots">Robots: </label>
+                        </div>
+                        <select class="custom-select" name="robot options" id="robots"></select>
                     </div>
-                    <select class="custom-select" name="robot options" id="robots"></select>
+                    <h5 class="row">
+                        <div class="col">
+                            <span class="badge badge-pill badge-primary">
+                                Speed: 
+                            </span>
+                        </div>
+                        <div class="col">
+                            <input type="range" id="input-robot-speed" value="3" min="1" max="5" step="1">
+                        </div>
+                        <div class="col">
+                            <span id="robot-speed-value" class="badge badge-secondary">3</span>
+                        </div>
+                    </h5>
+                    <h5 class="row">
+                        <div class="col">
+                            <span class="badge badge-pill badge-primary">
+                                Turn: 
+                            </span>
+                        </div>
+                        <div class="col">
+                            <span id="turn" class="badge badge-secondary">0</span>
+                        </div>
+                    </h5>
+                    <h5 class="row">
+                        <div class="col">
+                            <span class="badge badge-pill badge-primary">
+                                Place: 
+                            </span>
+                        </div>
+                        <div class="col">
+                            <span id="place" class="badge badge-secondary">--</span>
+                        </div>
+                    </h5>
+                    <div class="row">
+                        <div>
+                            <button type="button" id="start" class="btn btn-success">Start Robot</button>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div>
+                            <button type="button" id="stop" class="btn btn-primary">Stop Robot</button>
+                        </div>
+                    </div>
                 </div>
-            <!-- </div> -->
-            <!-- <div class="row"> -->
-            <div class="input-group">
-                <div class="input-group-prepend">
-                    <span class="input-group-text">Speed: </span>
-                </div>
-                <div class="col">
-                    <input type="range" id="input-robot-speed" value="3" min="1" max="5" step="1">
-                    <output id="robot-speed-value" class="values">3</output>
-                </div>
+                <!-- <div class="col-5">
+                    
+                </div> -->
             </div>
-            <!-- <div class="row"> -->
-                <div>
-                    <span class="labels">Turn: <output class="values" id="turn">0</output></span><br>
-                    <span class="labels">Place: <output class="values" id="place">--</output></span><br>
-                </div>
-            <!-- </div> -->
-            <!-- <div class="row"> -->
-                <div>
-                    <button type="button" id="start">Start Robot</button>
-                </div>
-            <!-- </div> -->
         </div>
     </div>
 </div>

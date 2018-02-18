@@ -13,7 +13,7 @@ const roads = [
 module.exports.roads = roads;
 
 const places = [
-    "Alice's House,70,20", "Bob's House,80,35", "Cabin,90,5", "Post Office,40,5",
+    "Alice's House,70,20", "Bob's House,80,35", "Cabin,88,5", "Post Office,40,5",
     "Town Hall,50,35", "Ernie's House,12,47", "Grete's House,5,30",
     "Daria's House,40,47", "Farm, 10,10", "Shop,25,35", "Marketplace,35,20"
 ];
