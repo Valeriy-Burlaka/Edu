@@ -57,38 +57,25 @@
     <audio src="./sounds/snare.wav" type="audio/wav" data-key="75"></audio>
     <audio src="./sounds/tink.wav" type="audio/wav" data-key="76"></audio>
 <script>
-    const allKeys = [...document.getElementsByClassName("key")];
-    const definedCodes = allKeys.map(key => key.getAttribute("data-key"));
-    const allAudios = [...document.getElementsByTagName("audio")];
 
-    document.addEventListener("keydown", (e) => {
-        let code = e.keyCode.toString();
-        if (definedCodes.indexOf(code) > -1) {
-            playSound(code);
-            highlightKey(code);
-        }
-    });
-    document.addEventListener("keyup", (e) => {
-        let code = e.keyCode.toString();
-        if (definedCodes.indexOf(code) > -1) {
-            undoHighlightKey(code);
-        }
-    });
-
-    function playSound(code) {
-        let targetAudio = allAudios.filter(a => a.getAttribute("data-key") == code)[0];
-        targetAudio.play();
+    function playSound(e) {
+        let audio = document.querySelector(`audio[data-key="${e.keyCode}"]`);
+        let key = document.querySelector(`.key[data-key="${e.keyCode}"]`);
+        if (!audio) return;
+        audio.currentTime = 0;  // rewind the audio
+        audio.play();
+        key.classList.add("playing");
     };
 
-    function highlightKey(code) {
-        let targetKey = allKeys.filter(k => k.getAttribute("data-key") == code)[0];
-        targetKey.className += " playing";
-    }
-
-    function undoHighlightKey(code) {
-        let targetKey = allKeys.filter(k => k.getAttribute("data-key") == code)[0];
-        targetKey.className = "key";
-    }
+    function removeTransition(e) {
+        if (e.propertyName == "transform") {
+            e.target.classList.remove("playing");
+        }
+    };
+    
+    document.addEventListener("keydown", playSound);
+    const keys = document.querySelectorAll(".key");
+    keys.forEach(k => k.addEventListener("transitionend", removeTransition));
 </script>
 </body>
 
