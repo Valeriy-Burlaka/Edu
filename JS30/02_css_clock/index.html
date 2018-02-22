@@ -45,16 +45,25 @@
         }
 
         .hand {
-            width: 50%;
-            height: 5px;
+            width: 5px;
+            height: 15rem;
             background-color: black;
             position: absolute;
-            top: 50%;
-            transform-origin: right;
-            /* transform: rotate(90deg); */
+            left: 50%;
+            transform-origin: bottom;
             transition: all 0.05s;
             transition-timing-function: cubic-bezier(0, 1.9, 0.51, 1);
         }
+
+        .hand.min-hand {
+            height: 13rem;
+            top: 2rem;
+        }
+
+        .hand.hour-hand {
+            height: 10rem;
+            top: 5rem;
+        }  
 
     </style>
 </head>
@@ -86,9 +95,9 @@
             // reset inline style, so it refers back to stylesheet again
             hands.forEach(el => el.style.transition = "");
         }
-        secondsHand.style.transform = `rotate(${seconds*6 + 90}deg)`;
-        minutesHand.style.transform = `rotate(${minutes*6 + 90}deg)`;
-        hoursHand.style.transform = `rotate(${hours*30 + 90}deg)`;
+        secondsHand.style.transform = `rotate(${seconds*6}deg)`;
+        minutesHand.style.transform = `rotate(${minutes*6}deg)`;
+        hoursHand.style.transform = `rotate(${hours*30}deg)`;
     }
 
     document.addEventListener("DOMContentLoaded", setDate);
