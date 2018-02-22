@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clock</title>
+    <style>
+    
+        html {
+            background: url("./background-2.jpeg");
+            background-repeat: no-repeat;
+            background-size: cover;
+            /* background-position: center center; */
+            /* background-attachment: fixed; */
+            font-size: 10px;
+        }
+
+        body {
+            font-size: 2rem;
+            display: flex;
+            flex: 1;
+            min-height: 100vh;  /* vh = % of viewport heigth */
+            align-items: center;
+        }
+
+        .clock {
+            width: 30rem;
+            height: 30rem;
+            border: 20px solid white;
+            border-radius: 50%;
+            margin: 50px auto;
+            padding: 2rem;
+            box-shadow: 
+                0 0 0 4px rgba(0,0,0,0.1),
+                inset 0 0 0 3px #EFEFEF,
+                inset 0 0 10px black,
+                0 0 10px rgba(0,0,0,0.2);
+        }
+
+        .face {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transform: translateY(-3px);
+        }
+
+        .hand {
+            width: 50%;
+            height: 5px;
+            background-color: black;
+            position: absolute;
+            top: 50%;
+            transform-origin: right;
+            /* transform: rotate(90deg); */
+            transition: all 0.05s;
+            transition-timing-function: cubic-bezier(0, 1.9, 0.51, 1);
+        }
+
+    </style>
+</head>
+<body>
+    <div class="clock">
+        <div class="face">
+            <div class="hand hour-hand"></div>
+            <div class="hand min-hand"></div>
+            <div class="hand sec-hand"></div>
+        </div>
+    </div>
+
+<script>
+    const hands = document.querySelectorAll(".hand");
+    const secondsHand = document.querySelector(".hand.sec-hand");
+    const minutesHand = document.querySelector(".hand.min-hand");
+    const hoursHand = document.querySelector(".hand.hour-hand");
+
+    function setDate() {
+        const date = new Date();
+        let seconds = date.getSeconds();
+        let minutes = date.getMinutes();
+        let hours = date.getHours() % 12;
+        if (seconds == 0) {
+            // otherwise we'll get a visual glitch when transitioning from
+            // 59 to 0 seconds (444 degrees -> 90 degrees)
+            hands.forEach(el => el.style.transition = "none");
+        } else {
+            // reset inline style, so it refers back to stylesheet again
+            hands.forEach(el => el.style.transition = "");
+        }
+        secondsHand.style.transform = `rotate(${seconds*6 + 90}deg)`;
+        minutesHand.style.transform = `rotate(${minutes*6 + 90}deg)`;
+        hoursHand.style.transform = `rotate(${hours*30 + 90}deg)`;
+    }
+
+    document.addEventListener("DOMContentLoaded", setDate);
+    setInterval(setDate, 500);
+</script>
+</body>
+</html>
