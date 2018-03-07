@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Cities</title>
+    <style>
+        
+        html {
+            box-sizing: border-box;
+            font-family: "helvetica neue";
+            font-weight: 300;
+            font-size: 20px;
+            background-color: #F4E8C1;
+        }
+        *, *:before, *:after {
+             box-sizing: inherit;
+        }
+        .container {
+            max-width: 400px;
+            margin: 50px auto;
+        }   
+        .search {
+            width: 120%;
+            padding: 20px;
+            margin: 0;
+            text-align: center;
+            outline: 0;
+            border: 10px solid #F7F7F7;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.12), inset 0 0 2px rgba(0, 0, 0, 0.19);
+            font-size: 2em;
+            position: relative;
+            left: -10%;
+            top: 10px;
+            z-index: 2;
+        }
+        .suggestions {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            position: relative;
+        }
+        .suggestions li {
+            background: white;
+            border-bottom: 1px solid #D8D8D8;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.14);
+            margin: 0;
+            padding: 1em;
+            transition: background 0.2s;
+            display: flex;
+            justify-content: space-between;
+            text-transform: capitalize;
+        }
+        .suggestions li:nth-child(even) {
+            transform: perspective(250px) rotateX(3deg) translateY(2px) scale(1.005);
+            background-color: lightgreen;
+        }
+        .suggestions li:nth-child(odd) {
+            transform: perspective(250px) rotateX(-3deg) translateY(5px);
+            background-color: lightblue;
+        }
+        .population {
+            font-size: 0.75em;
+        }     
+        .hl {
+            background-color: #F7B236;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <input type="text" class="search" placeholder="City or State">
+    <ul class="suggestions"></ul>
+</div>
+
+<script>
+
+const endpoint = `https://gist.githubusercontent.com/Miserlou/
+c5cd8364bf9b2420bb29/raw/2bf258763cdddd704f8ffd3ea9a3e81d25e2c6f6/cities.json`;
+const cities = [];
+fetch(endpoint).
+    then(blob => blob.json()).
+    then(data => cities.push(...data));
+
+function findMatches(wordToMatch, cities) {
+    if (!wordToMatch) return [];
+    let regex = new RegExp(wordToMatch, "gi");
+    return cities.filter(city => {
+        return city.city.match(regex) || city.state.match(regex);
+    });
+};
+
+function displayMatches() {
+    let matches = findMatches(this.value, cities);
+    let html;
+    if (matches.length == 0) {
+        html = `
+        <li>
+            <span class="name">Filter by city</span>
+        </li>
+        <li>
+            <span class="name">Or filter by state</span>
+        </li>
+        `;
+    } else {
+        html = matches.map( place => {
+            let regex = new RegExp(this.value, "gi");
+            let cityName = place.city.replace(regex, `<span class="hl">${this.value}</span>`);
+            let stateName = place.state.replace(regex, `<span class="hl">${this.value}</span>`);
+            return `
+                <li>
+                    <span class="name">${cityName}, ${stateName}</span>
+                    <span class="population">${place.population}</span>
+                </li>
+            `;
+        }).join("");
+    }
+    suggestions.innerHTML = html;
+};
+
+const searchInput = document.querySelector(".search");
+const suggestions = document.querySelector(".suggestions");
+
+searchInput.addEventListener("input", displayMatches);
+displayMatches(searchInput);
+
+</script>
+</body>
+</html>

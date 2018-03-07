@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Concert Kit!</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="keyboard">
+            <div class="key" data-key="81">
+                <kbd>Q</kbd>
+                <p class="sound">g1</p>
+            </div>
+            <div class="key" data-key="87">
+                <kbd>W</kbd>
+                <p class="sound">g2</p>
+            </div>
+            <div class="key" data-key="69">
+                <kbd>E</kbd>
+                <p class="sound">g3</p>
+            </div>
+            <div class="key" data-key="82">
+                <kbd>R</kbd>
+                <p class="sound">g4</p>
+            </div>
+            <div class="key" data-key="84">
+                <kbd>T</kbd>
+                <p class="sound">g5</p>
+            </div>
+            <div class="key" data-key="89">
+                <kbd>Y</kbd>
+                <p class="sound">g6</p>
+            </div>
+            <div class="key" data-key="85">
+                <kbd>U</kbd>
+                <p class="sound">s1</p>
+            </div>
+            <div class="key" data-key="73">
+                <kbd>I</kbd>
+                <p class="sound">s2</p>
+            </div>
+            <div class="key" data-key="65">
+                <kbd>A</kbd>
+                <p class="sound">boom</p>
+            </div>
+            <div class="key" data-key="83">
+                <kbd>S</kbd>
+                <p class="sound">clap</p>
+            </div>
+            <div class="key" data-key="68">
+                <kbd>D</kbd>
+                <p class="sound">hihat</p>
+            </div>
+            <div class="key" data-key="70">
+                <kbd>F</kbd>
+                <p class="sound">tom</p>
+            </div>
+            <div class="key" data-key="71">
+                <kbd>G</kbd>
+                <p class="sound">kick</p>
+            </div>
+            <div class="key" data-key="72">
+                <kbd>H</kbd>
+                <p class="sound">openhat</p>
+            </div>
+            <div class="key" data-key="74">
+                <kbd>J</kbd>
+                <p class="sound">ride</p>
+            </div>
+            <div class="key" data-key="75">
+                <kbd>K</kbd>
+                <p class="sound">snare</p>
+            </div>
+            <div class="key" data-key="76">
+                <kbd>L</kbd>
+                <p class="sound">tink</p>
+            </div>        
+        </div>
+    </div>
+    <audio src="./sounds/guitar/60_Cool_Gtr_04.wav" type="audio/wav" data-key="81"></audio>
+    <!-- <audio src="./sounds/guitar/g_tdd_120_01.wav" type="audio/wav" data-key="87"></audio> -->
+    <audio src="./sounds/bass/Bass_NS2_12.wav" type="audio/wav" data-key="87"></audio>
+    <!-- <audio src="./sounds/guitar/g_tdd_120_04.wav" type="audio/wav" data-key="69"></audio> -->
+    <audio src="./sounds/bass/pb_ms02_09.wav" type="audio/wav" data-key="69"></audio>
+    <!-- <audio src="./sounds/guitar/g_tdd_120_05.wav" type="audio/wav" data-key="82"></audio> -->
+    <audio src="./sounds/bass/psb02_17.wav" type="audio/wav" data-key="82"></audio>
+    <audio src="./sounds/guitar/g_tdd_120_22.wav" type="audio/wav" data-key="84"></audio>
+    <audio src="./sounds/guitar/SPH_G_08.wav" type="audio/wav" data-key="89"></audio>
+    <audio src="./sounds/synth/dx5_110_07.wav" type="audio/wav" data-key="85"></audio>
+    <audio src="./sounds/synth/dx5_110_24.wav" type="audio/wav" data-key="73"></audio>
+
+    <audio src="./sounds/boom.wav" type="audio/wav" data-key="65"></audio>
+    <audio src="./sounds/clap.wav" type="audio/wav" data-key="83"></audio>
+    <audio src="./sounds/hihat.wav" type="audio/wav" data-key="68"></audio>
+    <audio src="./sounds/tom.wav" type="audio/wav" data-key="70"></audio>
+    <audio src="./sounds/kick.wav" type="audio/wav" data-key="71"></audio>
+    <audio src="./sounds/openhat.wav" type="audio/wav" data-key="72"></audio>
+    <audio src="./sounds/ride.wav" type="audio/wav" data-key="74"></audio>
+    <audio src="./sounds/snare.wav" type="audio/wav" data-key="75"></audio>
+    <audio src="./sounds/tink.wav" type="audio/wav" data-key="76"></audio>     
+<script>
+    function playSound(e) {
+        let audio = document.querySelector(`audio[data-key="${e.keyCode}"]`);
+        let key = document.querySelector(`.key[data-key="${e.keyCode}"]`);
+        if (!audio) return;
+        audio.currentTime = 0;  // rewind the audio
+        audio.play();
+        key.classList.add("playing");
+    };
+
+    function removeTransition(e) {
+        if (e.propertyName == "transform") {
+            e.target.classList.remove("playing");
+        }
+    };
+    
+    document.addEventListener("keydown", playSound);
+    const keys = document.querySelectorAll(".key");
+    keys.forEach(k => k.addEventListener("transitionend", removeTransition));
+</script>
+</body>
+</html>

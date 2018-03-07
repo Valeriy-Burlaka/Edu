@@ -1,0 +1,62 @@
+:root {
+    --yellow-color: #ffc600;
+}
+
+html,
+body,
+.container {
+    width: 100%;
+    height: 100%;
+}
+
+body {
+    background-image: url("./image/concert_1680x1050.jpeg");
+    background-repeat: no-repeat;
+    background-position-x: center;
+    background-position-y: center;
+    background-attachment: fixed;
+    background-size: cover;
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.keyboard {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.key {
+    width: 80px;
+    text-align: center;
+    border: 4px solid black;
+    border-radius: 5px;
+    margin: 10px;
+    padding: 10px 5px;
+    color: white;
+    background-color: rgba(0, 0, 0, 0.4);
+    text-shadow: 0 0 5px black;
+    transition: all 0.1s;
+}
+
+.playing {
+    transform: scale(1.1); 
+    border-color: var(--yellow-color);
+    box-shadow: 0 0 10px var(--yellow-color);
+}
+
+kbd {
+    display: block;
+    font-size: 40px;   
+}
+
+.sound {
+    font-size: 11px;
+    color: var(--yellow-color);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
