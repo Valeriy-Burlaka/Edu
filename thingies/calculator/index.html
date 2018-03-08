@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <div class="col-12 result-container">
+            <span id="result">0</span>
+        </div>
+    </div>
+    <div class="row buttons">
+        <div class="col col-3 button border-right top-side-button" id="clean" data-kind="operator" data-value="clean">AC</div>
+        <div class="col col-3 button border-right top-side-button" id="plus-minus" data-value="+/-" data-kind="operator">&plus;/&minus;</div>
+        <div class="col col-3 button border-right top-side-button" id="percent" data-value="%" data-kind="operator">%</div>
+        <div class="col col-3 button right-side-button" data-value="/" data-kind="operator">
+            <span>&divide;</span>
+        </div>
+    </div>
+    <div class="row buttons">
+        <div class="col col-3 button border-right" data-value="7" data-kind="number">7</div>
+        <div class="col col-3 button border-right" data-value="8" data-kind="number">8</div>
+        <div class="col col-3 button border-right" data-value="9" data-kind="number">9</div>
+        <div class="col col-3 button right-side-button" id="times" data-value="*" data-kind="operator">
+            <span>&times;</span>
+        </div>
+    </div>
+    <div class="row buttons">
+        <div class="col col-3 button border-right" data-value="4" data-kind="number">4</div>
+        <div class="col col-3 button border-right" data-value="5" data-kind="number">5</div>
+        <div class="col col-3 button border-right" data-value="6" data-kind="number">6</div>
+        <div class="col col-3 button right-side-button" data-value="-" data-kind="operator">
+            <span>&minus;</span>
+        </div>
+    </div>
+    <div class="row buttons">
+        <div class="col col-3 button border-right" data-value="1" data-kind="number">1</div>
+        <div class="col col-3 button border-right" data-value="2" data-kind="number">2</div>
+        <div class="col col-3 button border-right" data-value="3" data-kind="number">3</div>
+        <div class="col col-3 button right-side-button" data-value="+" data-kind="operator">
+            <span>&plus;</span>
+        </div>
+    </div>
+    <div class="row buttons">
+        <div class="col col-6 button border-right" id="zero-container" data-value="0" data-kind="number">
+            <span >0</span>
+        </div>
+        <div class="col col-6" style="border-bottom-right-radius:4px">
+            <div class="row" style="height:100%;">
+                <div class="col col-6 button border-right" data-value="." data-kind="number">,</div>
+                <div class="col col-6 button right-side-button" style="border-bottom-right-radius:4px" data-value="=" data-kind="operator">
+                    <span>=</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<audio src="Funk.wav" type="audio/wav" id="error-sound"></audio>
+
+<script>
+"use strict";
+
+const buttons = document.querySelectorAll(".button");
+buttons.forEach( b => {
+    b.addEventListener("mousedown", function mouseDown(e) {
+        if (e.button == 0) {
+            this.classList.add("pressed");
+        }
+    });
+});
+buttons.forEach( b => {
+    b.addEventListener("mouseup", function mouseUp(e) {
+        if (e.button == 0) {
+            this.classList.remove("pressed");
+        }
+    });
+});
+
+const queue = [
+    {kind: "number", value: "0"}
+];
+const result = document.querySelector("#result");
+
+function lastItemInQueue() { return queue[queue.length-1]; };
+function isLastANumberInQueue() { return lastItemInQueue().kind == "number"; };
+function isLastAnOperatorInQueue() { return lastItemInQueue().kind == "operator"; };
+
+function playErrorSound() {
+    let sound = document.querySelector("#error-sound");
+    sound.currentTime = 0;
+    sound.play();
+};
+
+function handleNumberInput(number) {
+    let lastItem = lastItemInQueue();
+    if (lastItem.kind == "number") {
+        if (number != ".") {
+            // single zero
+            if (lastItem.value == "0") {
+                console.log("single zero");
+                lastItem.value = number;
+            } else {
+                lastItem.value += number;
+            }
+        // comma
+        } else {
+            if (lastItem.value.includes(".")) {
+                playErrorSound();
+            } else {
+                lastItem.value += number;
+            }
+        }
+    // 
+    } else {
+        queue.push({kind: "number", value: number});
+    }
+};
+
+function handleOperatorInput(operator) {
+    
+};
+
+function drawResult() {
+    let result = document.querySelector("#result");
+    let numbers = queue.filter( item => item.kind == "number" );
+    let value = numbers[numbers.length-1].value;
+    if (value.length > 7) {
+        let baseFontSize = 48, baseMargin = 10;
+        let resultSizes = {
+            8: 44, 9: 40, 10: 36, 11: 32, 12: 30, 13: 28, 14: 26,
+            15: 24, 16: 22, 17: 21, 18: 20, 19: 19, 20: 18, 21: 17,
+            22: 16, 23: 15, 24: 15, 25: 14, 26: 12, 27: 12, 28: 11,
+            29: 11, 30: 11, 31: 10, 32: 10, 33: 9, 34: 9, 35: 9,
+            36: 8, 37: 8, 38: 8
+        };
+        let newFontSize = resultSizes[value.length];
+        let newMargin = baseMargin + (baseFontSize - newFontSize) / 2;
+        // console.log(value, newFontSize, newMargin);
+        
+        result.style["font-size"] = `${newFontSize}px`;
+        result.style["margin-top"] = `${newMargin}%`;
+    }
+    result.innerHTML = value;
+}
+
+function handleClick(e) {
+    let kind = this.getAttribute("data-kind");
+    let value = this.getAttribute("data-value");
+    if (kind == "number") {
+        handleNumberInput(value);
+    } else {
+        handleOperatorInput(value);
+    }
+
+    drawResult();
+}
+
+buttons.forEach( b => {
+    b.addEventListener("click", handleClick);
+})
+
+
+
+
+</script>
+<!-- 
+
+<table>
+    <tr>
+        <td id="result" colspan="4"></td>
+    </tr>
+    <tr>
+        <td class="col" id="clean">C</td>
+        <td class="col" id="plus-minus">&plus;/&minus;</td>
+        <td class="col" id="percent">%</td>
+        <td class="col">&divide;</td>
+    </tr>
+    <tr>
+        <td class="col">7</td>
+        <td class="col">8</td>
+        <td class="col">9</td>
+        <td class="col">&times;</td>
+    </tr>
+    <tr>
+        <td class="col">4</td>
+        <td class="col">5</td>
+        <td class="col">6</td>
+        <td class="col">&minus;</td>
+    </tr>
+    <tr>
+        <td class="col">1</td>
+        <td class="col">2</td>
+        <td class="col">3</td>
+        <td class="col">&plus;</td>
+    </tr>
+    <tr>
+        <td class="col col-6" colspan="2">0</td>
+        <td class="col">,</td>
+        <td class="col">=</td>
+    </tr>
+</table> -->
+
+</body>
+</html>
