@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canvas Is Fun</title>
+    <style>
+    
+        html, body {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+<canvas id="display" width="1080" height="800"></canvas>
+
+<script>
+    const display = document.querySelector("#display");
+    display.width = window.innerWidth;
+    display.height = window.innerHeight;
+
+    const ctx = display.getContext("2d");
+    let hue = 0;
+    ctx.strokeStyle = `hsl(${hue}, 100%, 50%)`;
+    ctx.lineJoin = "round";
+    ctx.lineCap = "round";
+
+    let lastX = 0;
+    let lastY = 0;
+    let lineWidth = 1;
+    let lineWidthIncrement = 0.5;
+
+    function draw(e) {
+        [lastX, lastY] = [e.x, e.y];
+        function drawLine(e) {
+            ctx.lineWidth = lineWidth;
+            ctx.strokeStyle = `hsl(${hue}, 100%, 50%)`;
+            ctx.beginPath();
+            ctx.moveTo(e.x, e.y);
+            ctx.lineTo(lastX, lastY);
+            ctx.stroke();
+            ctx.closePath();
+            [lastX, lastY] = [e.x, e.y];
+            lineWidth += lineWidthIncrement;
+            if (lineWidth > 75 || lineWidth < 1) {
+                lineWidthIncrement = -lineWidthIncrement;
+            }
+            hue++;
+            if (hue > 360) { hue = 0 };
+        }
+        display.addEventListener("mousemove", drawLine);
+        display.addEventListener("mouseup", () => {
+            display.removeEventListener("mousemove", drawLine);
+        });
+        display.addEventListener("mouseout", () => {
+            display.removeEventListener("mousemove", drawLine);
+        });
+    };
+
+    display.addEventListener("mousedown", draw);
+</script>
+</body>
+</html>
