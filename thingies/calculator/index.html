@@ -100,7 +100,6 @@ function handleNumberInput(number) {
         if (number != ".") {
             // single zero
             if (lastItem.value == "0") {
-                console.log("single zero");
                 lastItem.value = number;
             } else {
                 lastItem.value += number;
@@ -120,7 +119,22 @@ function handleNumberInput(number) {
 };
 
 function handleOperatorInput(operator) {
-    
+    switch (operator) {
+        case "=":
+            console.log("Equals!");
+            break;
+        case "clean":
+            console.log("I'm clean!");
+            break;
+        case "+/-":
+            console.log("Negative, bro!");
+            break;
+        case "%":
+            console.log("Time for dividents, bro!");
+            break;
+        default:
+            console.log(`Got a ${operator}, bro!`);
+    }
 };
 
 function drawResult() {
@@ -129,6 +143,7 @@ function drawResult() {
     let value = numbers[numbers.length-1].value;
     if (value.length > 7) {
         let baseFontSize = 48, baseMargin = 10;
+        // {count_of_entered_numbers: font_size}
         let resultSizes = {
             8: 44, 9: 40, 10: 36, 11: 32, 12: 30, 13: 28, 14: 26,
             15: 24, 16: 22, 17: 21, 18: 20, 19: 19, 20: 18, 21: 17,
@@ -138,7 +153,6 @@ function drawResult() {
         };
         let newFontSize = resultSizes[value.length];
         let newMargin = baseMargin + (baseFontSize - newFontSize) / 2;
-        // console.log(value, newFontSize, newMargin);
         
         result.style["font-size"] = `${newFontSize}px`;
         result.style["margin-top"] = `${newMargin}%`;
