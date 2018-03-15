@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dev Tools Tricks</title>
+</head>
+<body>
+ <p onclick="makeGreen(event)">ZZZxZZZxZZZ</p>
+
+<script>
+    const dogs = [
+        {name: "Snickers", age: 2},
+        {name: "Hugo", age: 8}
+    ];
+
+    function makeGreen(e) {
+        // console.log(e);
+        // let p = document.querySelector("p");
+        e.target.style.color = "#BADA55";
+        e.target.style.fontSize = "50px";
+    };
+
+    // Clearing
+    console.clear();
+    console.log("Foo!");
+    // interpolation
+    console.log("Interpolated string %s", "foo!");
+    // Styling
+    console.log("%c Really styled text!", 
+        "font-size: 30px; color: #BADA55; background: #FF5FFB; text-shadow: 5px -5px 0 blue;");
+    // Warning
+    console.warn("Attention, please!");
+    // Error
+    console.error("Damn it!!");
+    // Info
+    console.info(`Oasis star Noel Gallagher took cocaine in Downing Street, 
+                 in a toilet reserved for the Queen`);
+    // Assertion
+    console.assert(2 === 1, "Wrong!");
+    // Viewing objects
+    const p = document.querySelector("p");
+    console.dir(p);
+    // Grouping
+    dogs.forEach( dog => {
+        // or console.groupCollapsed
+        console.group(`${dog.name}`);
+        console.log(`This is ${dog.name}`);
+        console.log(`${dog.name} is ${dog.age} human years old`);
+        console.log(`${dog.name} is ${dog.age * 7} dog years old`);
+        console.groupEnd(`${dog.name}`);
+    });
+    // Timing
+    let timer = "Creating large array of objects with large numbers inside";
+    console.time(timer);
+    let data = [];
+    for (let i = 0; i < 1000000; i++) {
+        let obj = {multiple: i*Math.pow(10, 7), pow: Math.pow(i, 20)};
+        data.push(obj);
+    }
+    console.timeEnd(timer);
+
+    timer = "Fetching some data";
+    let endpoint = `https://gist.githubusercontent.com/Miserlou/
+c5cd8364bf9b2420bb29/raw/2bf258763cdddd704f8ffd3ea9a3e81d25e2c6f6/cities.json`;
+
+    console.time(timer);
+    fetch(endpoint).
+        then(blob => blob.json()).
+        // Table
+        then(data => console.table(data.slice(0, 20)));
+    console.timeEnd(timer);
+</script>
+</body>
+</html>
