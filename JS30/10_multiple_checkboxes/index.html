@@ -7,46 +7,54 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        
+     
         body {
             background-color: rgb(192, 108, 78);
         }
-
         .container {
+            margin-top: 5%;
             margin-left: 35%;
             width: 400px;
-            border: 1px solid gray;
             border-radius: 10px;
-            background-color: bisque;
             box-shadow: 3px 3px 10px 0 rgba(0, 0, 0, 0.5);
         }
         
         .item {
-            height: 70px;
-            /* border: 1px solid darkgray; */
-            
-            font-family: "helvetica neue";
-            font-size: 16px;
             display: flex;
             flex-wrap: wrap;
             align-items: center;
             justify-content: flex-start;
+            background-color: rgb(233, 206, 173);
+            border-bottom: 1px solid gray;
+        }
+        .item:first-child {
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+        .item:last-child {
+            border-bottom-left-radius: 10px;
+            border-bottom-right-radius: 10px;
+        }
+        .item.checked > p {
+            text-decoration: line-through;
+            background-color: rgb(247, 225, 193);
         }
 
         input[type=checkbox] {
-            /* border: 1px solid darkgray; */
-            display: inline-block;
-            padding: 10px;
-            margin-left: 5%;
+            margin: 20px;
         }
-
+        
         p { 
-            max-width: 300px;
-            /* border: 1px solid red; */
-            margin-left: 7%;
-            /* display: inline-block; */
+            padding: 20px;
+            font-family: "helvetica neue";
+            font-size: 16px;
+            border-left: 1px solid gray;
+            margin: 0;
+            /* or flex: 1; */
+            flex-grow: 1;
+            flex-shrink: 1;
+            flex-basis: 0px;
         }
-    
     </style>
 </head>
 <body>
@@ -105,37 +113,37 @@ window.addEventListener("keyup", (e) => {
 
 checkboxes.forEach( chk => {
     chk.addEventListener("change", (e) => {
+        toggleCheckboxView(chk);
         if (shiftPressed) { 
-            console.log("Checkbox checked with Shift key!");
             handleMultipleSelect(e) 
         }
         lastCheckedIndex = checkboxes.indexOf(e.target);
-        console.log(`Last checked: ${lastCheckedIndex}`);
     });
 });
+
+function toggleCheckboxView(chk) {
+    if (chk.checked) {
+        chk.parentNode.classList.add("checked");
+    } else {
+        chk.parentNode.classList.remove("checked");
+    }
+};
 
 function handleMultipleSelect(e) {
     let recentlyChecked = checkboxes.find( chk => chk == e.target);
     let recentlIndex = checkboxes.indexOf(recentlyChecked);
-    console.log(`Recently checked checkbox with index ${recentlIndex}`);
     let startIndex, endIndex;
-    if (lastCheckedIndex) {
+    if (lastCheckedIndex != undefined) {
         startIndex = Math.min(recentlIndex, lastCheckedIndex);
         endIndex = Math.max(recentlIndex, lastCheckedIndex);
     } else {
         startIndex = endIndex = recentlIndex;
     }
-    console.log(`Let's check checkboxes from ${startIndex} to ${endIndex}`);
-    checkboxes.slice(startIndex, endIndex).forEach( chk => {
-        if (!chk.checked) { chk.checked = true }
+    checkboxes.slice(startIndex, endIndex+1).forEach( chk => {
+        chk.checked = recentlyChecked.checked;
+        toggleCheckboxView(chk);
     });
-    
-
-   // TODO: up, then down, then up: checkboxes between the last one and filled block are not checked
-   // TODO: mass uncheck does not work
-   // TODO: text decoration (crossed) & color change for checked block
 }
-
 </script>
 </body>
 </html>
