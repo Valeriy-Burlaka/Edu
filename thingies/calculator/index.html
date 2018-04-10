@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -79,10 +80,10 @@ buttons.forEach( b => {
     });
 });
 
-const queue = [
+let queue = [
     {kind: "number", value: "0"}
 ];
-const result = document.querySelector("#result");
+
 
 function lastItemInQueue() { return queue[queue.length-1]; };
 function isLastANumberInQueue() { return lastItemInQueue().kind == "number"; };
@@ -92,6 +93,21 @@ function playErrorSound() {
     let sound = document.querySelector("#error-sound");
     sound.currentTime = 0;
     sound.play();
+};
+
+function highlightCurrentOperator(operator) {
+    let allB = Array.from(buttons);
+    allB.forEach(b => b.classList.remove("thicker-border"));
+    let target = allB.filter(b => {
+        return b.getAttribute("data-value") == operator;
+    })[0];
+    target.classList.add("thicker-border");
+};
+
+function blinkResultValue() {
+    let result = document.querySelector("#result");
+    result.classList.add("blinking");
+    window.setTimeout(() => result.classList.remove("blinking"), 100);
 };
 
 function handleNumberInput(number) {
@@ -114,26 +130,113 @@ function handleNumberInput(number) {
         }
     // 
     } else {
+        if (number == ".") {
+            number = "0.";
+        }
         queue.push({kind: "number", value: number});
     }
 };
 
+let memorizedOp;
+
+function evaluateSequence(seq) {
+    console.dir(`Eval: memo: ${memorizedOp}`);
+    let result;
+    let kindSeq = seq.map(elt => elt.kind).join(",");
+    console.info(`Handle ${kindSeq} case`);
+    if (kindSeq == "number") {
+        if (!memorizedOp) {
+            blinkResultValue();
+            result = seq[0];
+        } else {
+            let expr = seq[0].value + memorizedOp;
+            result = {kind: "number", value: eval(expr).toString()}
+        }  
+    // E.g., "5*=". Interpreted as "5*5="
+    } else if (kindSeq == "number,operator") {
+        let expr = `${seq[0].value}${seq[1].value}${seq[0].value}`;
+        memorizedOp = `${seq[1].value}${seq[0].value}`;
+        // let expr = queue.map(elt => elt.value).join("") + queue[0].value;
+        result = {kind: "number", value: eval(expr).toString()};
+    } else if (kindSeq == "number,operator,number" || 
+                kindSeq == "number,operator,number,operator,number" ) {        
+        let expr = seq.map(elt => elt.value).join("");
+        memorizedOp = `${seq[seq.length-2].value}${seq[seq.length-1].value}`;
+        result = {kind: "number", value: eval(expr).toString()};
+    }
+
+    return result;
+};
+
+function operatorWeight(operator) {
+    switch (operator) {
+        case "+":
+        case "-":
+            return 1;
+        case "*":
+        case "/":
+            return 2;
+    }
+};
+
+function reverseSign(num) {
+    if (num == "0") {}
+    else if (num.startsWith("-")) {
+        num = num.slice(1);
+    } else {
+        num = "-" + num;
+    }
+    return num;
+};
+
 function handleOperatorInput(operator) {
+    let lastItem = lastItemInQueue();
     switch (operator) {
         case "=":
             console.log("Equals!");
+            let res = evaluateSequence(queue);
+            queue = [res];
             break;
         case "clean":
-            console.log("I'm clean!");
+            console.log("Triggered clean!");
             break;
         case "+/-":
             console.log("Negative, bro!");
+            if (lastItem.kind == "number") {
+                lastItem.value = reverseSign(lastItem.value);
+            } else {
+                // last item is operator, so the item before last item should be a number
+                let lastNumber = queue[queue.length-2];
+                queue.push({kind: "number", value: reverseSign(lastNumber)});
+            }
             break;
         case "%":
             console.log("Time for dividents, bro!");
             break;
         default:
             console.log(`Got a ${operator}, bro!`);
+            highlightCurrentOperator(operator);
+            if (lastItem.kind == "operator") {
+                lastItem.value = operator;
+            } else {
+                queue.push({kind: "operator", value: operator});
+            }
+            blinkResultValue();
+
+            let opsInQueue = queue.filter(i => i.kind == "operator");
+            if (opsInQueue.length == 2) {
+                console.log("2 operators in queue, hold on!");
+                switch (operatorWeight(opsInQueue[0].value) - operatorWeight(opsInQueue[1].value)) {
+                    case 1:
+                    case 0:
+                        let res = evaluateSequence(queue.slice(0, queue.length-1));
+                        queue = [res, queue[queue.length-1]];
+                        break;
+                }
+            } else if (opsInQueue.length > 2) {
+                let res = evaluateSequence(queue.slice(0, queue.length-1));
+                queue = [res, queue[queue.length-1]];
+            }        
     }
 };
 
@@ -180,42 +283,6 @@ buttons.forEach( b => {
 
 
 </script>
-<!-- 
-
-<table>
-    <tr>
-        <td id="result" colspan="4"></td>
-    </tr>
-    <tr>
-        <td class="col" id="clean">C</td>
-        <td class="col" id="plus-minus">&plus;/&minus;</td>
-        <td class="col" id="percent">%</td>
-        <td class="col">&divide;</td>
-    </tr>
-    <tr>
-        <td class="col">7</td>
-        <td class="col">8</td>
-        <td class="col">9</td>
-        <td class="col">&times;</td>
-    </tr>
-    <tr>
-        <td class="col">4</td>
-        <td class="col">5</td>
-        <td class="col">6</td>
-        <td class="col">&minus;</td>
-    </tr>
-    <tr>
-        <td class="col">1</td>
-        <td class="col">2</td>
-        <td class="col">3</td>
-        <td class="col">&plus;</td>
-    </tr>
-    <tr>
-        <td class="col col-6" colspan="2">0</td>
-        <td class="col">,</td>
-        <td class="col">=</td>
-    </tr>
-</table> -->
 
 </body>
 </html>

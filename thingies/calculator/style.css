@@ -57,6 +57,15 @@
     margin-right: 6%;
 }
 
+@keyframes blink {
+    from {color: transparent;}
+    to {color: white;}
+}
+
+#result.blinking {
+    animation: blink 0.075s linear;
+}
+
 .button {
     height: 100%;
     display: flex;
@@ -94,7 +103,7 @@
     background-color: #BBBBBB;
 }
 
-.button.right-side-button.button.pressed {
+.button.right-side-button.pressed {
     background-color: rgba(211, 119, 34, 0.9);
     color: rgb(85, 82, 82);
 }
@@ -120,4 +129,6 @@
     border-right: solid var(--border-gray) 1px;
 }
 
-
+.thicker-border {
+    border: 1px solid var(--border-gray);
+}
